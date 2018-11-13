@@ -1,0 +1,194 @@
+#include<iostream>
+using namespace std;
+
+//二叉树的二叉链表存储表示
+typedef struct BiNode
+{
+	char data;						//结点数据域
+	struct BiNode *lchild,*rchild;	//左右孩子指针
+}BiTNode,*BiTree;
+
+void CreateBiTree(BiTree &T)
+{
+	//按先序次序输入二叉树中结点的值（一个字符），创建二叉链表表示的二叉树T
+	char ch;
+	cin >> ch;
+	if(ch=='#')
+	    T=NULL;			//递归结束，建空树
+	else
+	{
+		T=new BiTNode;
+		T->data=ch;					//生成根结点
+		CreateBiTree(T->lchild);	//递归创建左子树
+		CreateBiTree(T->rchild);	//递归创建右子树
+	}								//else
+}									//CreateBiTree
+
+void FirstOrderTraverse(BiTree T)
+{
+    //先序遍历
+    if(T)
+    {
+        cout << T->data;
+        FirstOrderTraverse(T->lchild);
+        FirstOrderTraverse(T->rchild);
+    }
+}
+
+void InOrderTraverse(BiTree T)
+{
+	//中序遍历二叉树T的递归算法
+	if(T)
+	{
+		InOrderTraverse(T->lchild);
+		cout << T->data;
+		InOrderTraverse(T->rchild);
+	}
+}
+
+void LastOrderTraverse(BiTree T)
+{
+    if(T)
+    {
+        LastOrderTraverse(T->lchild);
+        LastOrderTraverse(T->rchild);
+        cout << T->data;
+    }
+}
+
+int Depth(BiTree T)
+{
+    int m,n;
+    if(T == NULL)
+        return 0;
+    else
+    {
+        m = Depth(T->lchild);
+        n = Depth(T->rchild);
+        if(m > n)
+        {
+            return m + 1;
+        }
+        else
+        {
+            return n + 1;
+        }
+    }
+}
+
+int NodeCount(BiTree T)
+{
+    if(T == NULL)
+        return 0;
+    else
+        return NodeCount(T->lchild) + NodeCount(T->rchild) + 1;
+}
+
+int LeafNodeCount(BiTree T)
+{
+    if (T == NULL)
+        return 0;
+    if (T->lchild == NULL && T->rchild == NULL)
+        return 1;
+    return (LeafNodeCount(T->lchild) + LeafNodeCount(T->rchild));
+}
+
+//void Copy(BiTree T,BiTree &NewT)
+//{
+//    if(T == NULL)
+//    {
+//        NewT = NULL;
+//        return;
+//    }
+//    else
+//    {
+//        NewT = new BiTNode;
+//        NewT->data = T->data;
+//        Copy(T->lchild,NewT->lchild);
+//        Copy(T->rchild,NewT->rchild);
+//    }
+//}
+
+void PrintNodeAtLevel(BiTree T,int level)
+  {
+     // 空树或层级不合理
+      if (NULL == T || level < 1 )
+          return;
+
+      if (1 == level)
+      {
+          cout << T->data << "  ";
+         return;
+     }
+
+     // 左子树的 level - 1 级
+     PrintNodeAtLevel(T->lchild,  level - 1);
+
+     // 右子树的 level - 1 级
+     PrintNodeAtLevel(T->rchild, level - 1);
+ }
+
+
+ void LevelTraverse(BiTree T)
+ {
+     if (NULL == T)
+         return;
+
+     int depth = Depth(T);
+
+     int i;
+     for (i = 1; i <= depth; i++)
+     {
+         PrintNodeAtLevel(T, i);
+         cout << endl;
+     }
+ }
+
+ void Exchange(BiTree &T)
+{
+    BiTree temp;
+    if(T)
+    {
+        temp = T->lchild;
+        T->lchild = T->rchild;
+        T->rchild = temp;
+        Exchange(T->lchild);
+        Exchange(T->rchild);
+    }
+}
+
+int main()
+{
+	BiTree tree;
+	cout<<"请输入建立二叉链表的序列：\n";
+	CreateBiTree(tree);
+	cout<<"所建立的二叉链表先序序列：\n";
+	FirstOrderTraverse(tree);
+	cout<<endl;
+	cout<<"所建立的二叉链表中序序列：\n";
+	InOrderTraverse(tree);
+	cout<<endl;
+	cout<<"所建立的二叉链表后序序列：\n";
+	LastOrderTraverse(tree);
+	cout<<endl;
+	cout<<"所建立的二叉链表层次序列：\n";
+	LevelTraverse(tree);
+	cout<<endl;
+	cout<<"所建立的二叉链表的深度：\n";
+	cout<<Depth(tree);
+	cout<<endl;
+	cout<<"所建立的二叉链表的结点数：\n";
+	cout<<NodeCount(tree);
+	cout<<endl;
+	cout<<"所建立的二叉链表的叶子结点数：\n";
+	cout << LeafNodeCount(tree);
+	cout<<endl;
+	cout<<"所建立的二叉链表左右子树互换：\n";
+	Exchange(tree);
+	FirstOrderTraverse(tree);
+	cout<<endl;
+	return 0;
+}
+
+
+//测试：ABC##DE#G##F###
